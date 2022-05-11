@@ -1,0 +1,78 @@
+<%= render "/home/header"%>
+
+<div class="relative py-16 bg-white overflow-hidden">
+  <div class="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
+    <div class="relative h-full text-lg max-w-prose mx-auto" aria-hidden="true">
+      <svg class="absolute top-12 left-full transform translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="74b3fd99-0a6f-4271-bef2-e80eeafdf357" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#74b3fd99-0a6f-4271-bef2-e80eeafdf357)" />
+      </svg>
+      <svg class="absolute top-1/2 right-full transform -translate-y-1/2 -translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="f210dbf6-a58d-4871-961e-36d5016a0f49" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)" />
+      </svg>
+      <svg class="absolute bottom-12 left-full transform translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="d3eb07ae-5182-43e6-857d-35c643af9034" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#d3eb07ae-5182-43e6-857d-35c643af9034)" />
+      </svg>
+    </div>
+  </div>
+  <div class="relative px-4 sm:px-6 lg:px-8">
+    <div class="text-lg max-w-prose mx-auto">
+      <h1>
+        <span class="block text-base text-center text-cyan-800 font-semibold tracking-wide uppercase">Documentation</span>
+        </h1>
+     </div>
+      
+    <div class="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
+
+    <h2> Architecture: </h2>
+    <p> The composition of the jamming module is as follows: </p>
+    <pre>
+    <code>
+    
+├── src/jamming/
+│&nbsp;&nbsp; ├── bindings/
+│&nbsp;&nbsp; ├── examples/
+│&nbsp;&nbsp; ├── helper/
+│&nbsp;&nbsp; ├── model/
+│&nbsp;&nbsp; └── test/
+    </code>
+     </pre>
+    <p> This module is divided in four main elements: </p> 
+    <ul> 
+    <li> The Jammer element which, as its name suggests, represents the jammer and the implementation of its strategy. </li>
+    <li> The Defense element which includes both mitigation and detection strategies </li>
+    <li> The Physical element which make the link beetween the physical layre of WiFi module and the Jammer element </li>
+    <li> The Wireless Utility element which contains all the functions and the essential metrics which make it possible to calculate the effectiveness of an attack or the detection system. It makes the link between the other elements </li>
+    </ul>
+    <h3> Jammer Element </h3>
+         <p> The <b>jammer.cc class </b> (available in the model folder) is the parent class of this element and makes it possible to implement, thanks to an inheritance system, all possible jamming strategies such as the classes <b> reactive-jammer.cc </b> , <b> constant-jammer.cc </b> or <b> random-jammer.cc </b> </p>
+         <p> The <b> my-gym-env-jammer.cc class </b>, coupled with the jammer.cc classe, permits to eleborate jamming attack based on Reinforcement Learning. </p>
+         <p> At the moment 5 types of jamming attacks are implemented: constant, reactive, random, <a href="#">Folpetti</a> and <a href= "#">Agent-Actor Jamming </a> </p> 
+    <h3> Defense Element </h3>
+        <p> In the same way as the jamming element, the <b> detection.cc </b> class is the parent class of all the classes where the different detection strategies (ex: <b> detection-per.cc</b>) are implemented.</p>
+        <p> Mitigate-by-channel-hop is at the moment the only mitigation method implemented. Hovwer, several stratgies of channel hopping are present: incremental, random, and <a href =" "> Multi-Armed Bandit strategy </a></p>
+    <h3> Physical Element </h3>
+        <p>  The physical layer of a jammer contains particular characteristics. Therefore, modifications of several parameters are
+        necessary on the physical layer of ns-3 to simulate jammingattacks. These various changes have been made in the <b> nsl-wifi-phy.cc </b> and <b> nsl-wifi-channel.cc </b>classes which inherits the basic functions of
+        the <b>wifi-phy.cc</b> and <b>wifi-chanel.cc</b> classes.
+    <h3> Wireless Utility Element </h3>
+        <p> Represented by the <b> wireless-module-utility.cc</b> class, allows to calculate the metrics and to provide them easily to other elements. The PDR, the number of packet jammed, the energy consumption or RSSI are
+        metrics computed in this class.
+    </div>
+</div>
+
+<%= render "/home/footer" %>

@@ -1,0 +1,260 @@
+<%= render "/home/header"%>
+
+<div class="relative py-16 bg-white overflow-hidden">
+  <div class="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
+    <div class="relative h-full text-lg max-w-prose mx-auto" aria-hidden="true">
+      <svg class="absolute top-12 left-full transform translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="74b3fd99-0a6f-4271-bef2-e80eeafdf357" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#74b3fd99-0a6f-4271-bef2-e80eeafdf357)" />
+      </svg>
+      <svg class="absolute top-1/2 right-full transform -translate-y-1/2 -translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="f210dbf6-a58d-4871-961e-36d5016a0f49" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)" />
+      </svg>
+      <svg class="absolute bottom-12 left-full transform translate-x-32" width="404" height="384" fill="none" viewBox="0 0 404 384">
+        <defs>
+          <pattern id="d3eb07ae-5182-43e6-857d-35c643af9034" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="4" height="4" class="text-gray-200" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="404" height="384" fill="url(#d3eb07ae-5182-43e6-857d-35c643af9034)" />
+      </svg>
+    </div>
+  </div>
+  <div class="relative px-4 sm:px-6 lg:px-8">
+    <div class="text-lg max-w-prose mx-auto">
+      <h1>
+        <span class="block text-base text-center text-cyan-800 font-semibold tracking-wide uppercase">Examples</span>
+        </h1>
+     </div>
+      
+    <div class="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
+
+    <h2> Example of jamming attack: </h2>
+    <p> In this scenarios, we want to create a basic network composed of one acces point and two nodes. 
+    An attacker jams the communication beetween the node 1 and the accesPoint. </p>
+    <p> The first step is to create the different nodes :  </p>
+    <pre>
+    <code>
+    // Create 1 jammer + 1 acces point + 2 nodes 
+    NodeContainer c;
+    NodeContainer wifiStatNodes, accesPoint;
+    accesPoint.Add (c.Get (0));
+    wifiStatNodes.Add (c.Get (1));
+    wifiStatNodes.Add( c.Get(2));
+    </code>
+     </pre>
+    <p> Next, we create the WiFi physical layer on our legitimate network(acces point and stations) </p> 
+    <pre>
+    <code>
+    // Wifi PHY layer 
+
+    NslWifiPhyHelper wifiPhy = NslWifiPhyHelper::Default ();
+
+  // Wifi channel 
+  NslWifiChannelHelper wifiChannel = NslWifiChannelHelper::Default ();
+  wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
+  wifiChannel.AddPropagationLoss ("ns3::FriisPropagationLossModel");
+  Ptr<NslWifiChannel> wifiChannelPtr = wifiChannel.Create ();
+  wifiPhy.SetChannel (wifiChannelPtr);
+
+  // MAC layer 
+  WifiMacHelper wifiMac = WifiMacHelper();
+  Ssid ssid = Ssid ("ns-3-ssid");
+
+  wifiMac.SetType ("ns3::StaWifiMac",
+                        "Ssid", SsidValue (ssid),
+                        "ActiveProbing", BooleanValue (false));
+
+  WifiHelper wifi = WifiHelper();
+  wifi.SetStandard (WIFI_PHY_STANDARD_80211a);
+
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+                                "DataMode", StringValue ("OfdmRate54Mbps"));
+
+  NetDeviceContainer devices = wifi.Install(wifiPhy, wifiMac, wifiStatNodes );
+ 
+  wifiMac.SetType ("ns3::ApWifiMac",
+                       "Ssid", SsidValue (ssid));
+
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+                                "DataMode", StringValue ("OfdmRate54Mbps"));
+
+  NetDeviceContainer apContainer = wifi.Install(wifiPhy, wifiMac, accesPoint);
+
+  </code>
+  </pre>
+
+  <p> Same logic for the jammer  </p>
+  <pre>
+  <code>
+  WifiHelper wifi2;
+  wifi2.SetStandard (WIFI_PHY_STANDARD_80211b);
+  NslWifiPhyHelper wifiPhy2 = NslWifiPhyHelper::Default ();
+
+  // Wifi channel 
+  NslWifiChannelHelper wifiChannel2 = NslWifiChannelHelper::Default ();;
+  wifiChannel2.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
+  wifiChannel2.AddPropagationLoss ("ns3::FriisPropagationLossModel");
+  Ptr<NslWifiChannel> wifiChannelPtr2 = wifiChannel2.Create ();
+  wifiPhy2.SetChannel (wifiChannelPtr2);
+
+  // MAC layer 
+  WifiMacHelper wifiMac2 = WifiMacHelper();
+  wifi2.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode",
+      StringValue ("DsssRate1Mbps"), "ControlMode", StringValue ("DsssRate1Mbps"));
+  wifiMac2.SetType ("ns3::AdhocWifiMac");
+  </code>
+  </pre>
+
+  <p> Define and assign the network mobility scheme: </p>
+
+  <pre>
+  <code>
+  MobilityHelper mobility;
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  //ap
+  positionAlloc->Add (Vector(0.0,0.0,0.0));
+  //sink
+  int ii=1;
+  float position = 1.0/2;
+  float lastPosition = 0.0;
+  while(ii<=4){
+      positionAlloc->Add(Vector(lastPosition,1.0,0.0));
+      lastPosition = lastPosition + position;
+      ii= ii+1;
+  }
+
+  mobility.SetPositionAllocator(positionAlloc);
+  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");;
+  mobility.InstallAll();
+  </code>
+  </pre>
+
+  <p> Define and assign the energy model of the network: </p>
+
+  <pre>
+  <code>
+  BasicEnergySourceHelper basicSourceHelper;
+  // configure energy source
+  basicSourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (800.0));
+  // install on node
+  EnergySourceContainer energySources = basicSourceHelper.Install (wifiStatNodes);
+  EnergySourceContainer energyAp = basicSourceHelper.Install (accesPoint);
+  EnergySourceContainer energyJammer = basicSourceHelper.Install (devices.Get(1));
+ 
+  WifiRadioEnergyModelHelper radioEnergyHelper;
+  // configure radio energy model
+  radioEnergyHelper.Set ("TxCurrentA", DoubleValue (0.0174));
+
+  // install on devices
+  DeviceEnergyModelContainer deviceModels =
+      radioEnergyHelper.Install (devices, energySources);
+  DeviceEnergyModelContainer apModels =
+      radioEnergyHelper.Install (apContainer, energyAp);
+
+  </code>
+  </pre>
+
+  <p> Create the Jammer Element. We create a constant jammer. The channel is fixed and any reaction has been selected.</p>
+  <pre>
+  <code>
+  JammerHelper jammerHelper;
+  jammerHelper.SetJammerType ("ns3::ConstantJammer");
+  jammerHelper.Set("ConstantJammerReactToMitigationFlag",UintegerValue(0));
+  jammerHelper.Set("ReactByChannelHopMethod",UintegerValue(0));
+  JammerContainer jammers = jammerHelper.Install (c.Get(2));
+  // Get pointer to Jammer
+  Ptr<Jammer> jammerPtr = jammers.Get (0);
+  Ptr<WirelessModuleUtility> utilityJammer = utilities.Get (2);
+  </code>
+  </pre>
+
+  <p> Install internet </p>
+
+  <pre>
+  <code>
+  InternetStackHelper internet;
+  internet.Install (accesPoint);
+  internet.Install(wifiStatNodes);
+  // Assign Ip Address
+  Ipv4AddressHelper ipv4;
+  ipv4.SetBase ("10.1.1.0", "255.255.255.0");
+  Ipv4InterfaceContainer ipv4Interface = ipv4.Assign (apContainer);
+  Ipv4InterfaceContainer i1= ipv4.Assign(devices);
+  </code>
+  </pre>
+
+  <p> Configure sending and receiving packets </p>
+  <pre>
+  <code>
+  uint16_t port = 9;
+
+  PacketSinkHelper sink ("ns3::TcpSocketFactory",
+                         InetSocketAddress (Ipv4Address::GetAny (), port));
+  ApplicationContainer sinkApps = sink.Install (wifiStatNodes.Get (0));
+  sinkApps.Start (Seconds (0.0));
+  sinkApps.Stop (Seconds (TimeSimulation));
+
+  BulkSendHelper source ("ns3::TcpSocketFactory",
+                         InetSocketAddress (i1.GetAddress (0), port));
+  // Set the amount of data to send in bytes.  Zero is unlimited.
+  source.SetAttribute ("MaxBytes", UintegerValue (0));
+  ApplicationContainer sourceApps = source.Install (accesPoint.Get (0));
+  sourceApps.Start (Seconds (1.0));
+  sourceApps.Stop (Seconds (50.0));
+  
+  </code>
+  </pre>
+  <p>  Schedule the start of the jammer </p>
+
+  <pre>
+  <code>
+  Simulator::Schedule (Seconds (2.0), &ns3::Jammer::StartJammer,jammerPtr);
+  </code>
+  </pre>
+
+  <p> Start the simulation </p>
+  <pre>
+  <code>
+  Simulator::Stop (Seconds (50));
+  Simulator::Run ();
+  Simulator::Destroy ();
+  NS_LOG_INFO ("Done.");
+  </code>
+  </pre>
+  
+  <p> If you want see the PDR at frequent interval of a node, you can create a function <b> NodePdr() </b> </p>
+  <pre>
+  <code>
+  void NodePdr (Ptr<WirelessModuleUtility> node, double time)
+  {
+  Time t = Simulator::Now();
+  double pdr = node->GetPdr();
+  NS_LOG_UNCOND ("--\nPDR == : "<< pdr << " at time = " << Simulator::Now ().GetSeconds () << "\n--");
+
+    if(t.GetSeconds() < time) {
+    Simulator::Schedule(Seconds(0.2), &NodePdr, node,  time); }
+  }
+  </code>
+  </pre>
+
+  <p> and call this function in main function after the  start block of jammer </p>
+
+  <pre>
+  <code>
+  Simulator::Schedule(Seconds(0.1), NodePdr, utilitySend,50.0);
+  </code>
+  </pre>
+  </div>
+</div>
+
+<%= render "/home/footer" %>
